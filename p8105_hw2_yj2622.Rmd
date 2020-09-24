@@ -42,5 +42,14 @@ precip_2017 <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",she
   relocate(year)
 ```
 
+Combine annual precipitation:
 
+```{r}
+month_df <- tibble(
+  month = 1:12,
+  month_name = month.name
+)
+precip_df <- bind_rows(precip_2017,precip_2018) %>% 
+left_join( month_df, by = "month") %>% select(-month)
+```
 
