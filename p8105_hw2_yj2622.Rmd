@@ -35,10 +35,12 @@ precip_2018 <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",she
   mutate(year = 2018) %>% 
   relocate(year)
 
-precip_2018 <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet = "2017 Precipitation",skip = 1) %>% 
+precip_2017 <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet = "2017 Precipitation",skip = 1) %>% 
   janitor::clean_names() %>% 
   drop_na(month) %>% 
   mutate(year = 2017) %>% 
   relocate(year)
 ```
+
+
 
