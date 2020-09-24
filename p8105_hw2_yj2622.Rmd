@@ -5,3 +5,10 @@ date: "2020/9/24"
 output: github_document
 ---
 
+This is the solution to homework 2!
+
+```{r setup}
+library(tidyverse)
+```
+
+
