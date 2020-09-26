@@ -75,3 +75,38 @@ This dataset contains information from the Mr. Trash Wheel trash collector in Ba
  
  * The total precipitation in 2018 was `r sum(pull(precip_df,total)[pull(precip_df,year) == 2018])`. The median    number of sports balls in 2017 was `r  median(pull(mr_trash_wheel_data,sports_balls))`.
 
+## Problem 2
+
+Read and clean NYC transit data:
+
+```{r read_clean_nyc_transit_data,message = FALSE}
+nyc_transit_data <- read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+  janitor::clean_names() %>% 
+  select(line, station_name, station_latitude, station_longitude, starts_with("route"), entry, vending, entrance_type, ada) %>% 
+  drop_na(route2:route11) %>% 
+  mutate(entry = recode(entry, "YES" = TRUE,"NO" = FALSE))
+```
+
+The first 10 lines of the cleaned NYC transit dataset :
+
+```{r}
+nyc_transit_data
+```
+
+This dataset provides information about each entrance and exit for each subway in NYC.
+
+ * It contains infromation on station name, location, routes and whether it's an entry.
+ 
+ * There are total `r nrow(nyc_transit_data)` rows and `r ncol(nyc_transit_data)` columns in this dataset.
+ 
+ * My cleaning steps:
+ 
+   * change the variable names into proper format;
+  
+   * select columns needed;
+  
+   * drop NAs in dataset;
+  
+   * convert the values of `entry` to logical variables.
+  
+ * And these data are tidy.
