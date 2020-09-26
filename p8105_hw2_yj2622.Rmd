@@ -16,7 +16,7 @@ library(readxl)
 
 Read and clean the Mr. Trash Wheel data:
 
-```{r}
+```{r read_clean_mtw}
 mr_trash_wheel_data <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet = "Mr. Trash Wheel",skip = 1,range = cell_cols("A:N")) %>% 
   janitor::clean_names() %>% 
   drop_na(dumpster) %>% 
@@ -28,7 +28,7 @@ mr_trash_wheel_data <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.x
 
 Read precipitation data:
 
-```{r}
+```{r read_clean_precip}
 precip_2018 <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet = "2018 Precipitation",skip = 1) %>% 
   janitor::clean_names() %>% 
   drop_na(month) %>% 
@@ -44,7 +44,7 @@ precip_2017 <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",she
 
 Combine annual precipitation:
 
-```{r}
+```{r combine_precip}
 month_df <- tibble(
   month = 1:12,
   month_name = month.name
@@ -54,4 +54,12 @@ left_join( month_df, by = "month") %>%
   select(-month) %>% 
   rename("month" ="month_name")
 ```
+
+This dataset contains information from the Mr. Trash Wheel trash collector in Baltimore, Maryland. The trash enters the innder harbor, the trashwheel collectes that trash, and stores it in a dumpster. 
+
+ * The dataset contains information on year, month and trash collected,  including some specific kind of trash. There are a total of `r   nrow(mr_trash_wheel_data)` rows in the final dataset. 
+ 
+ * Additional data sheets include month precipitation data from 2014 to  2019. The combined precipitation dataset has `r nrow(precip_df)` rows   and key variables are year, month and precipitation amount. 
+ 
+ * The total precipitation in 2018 was `r sum(pull(precip_df,total)[pull(precip_df,year) == 2018])`. The median    number of sports balls in 2017 was `r  median(pull(mr_trash_wheel_data,sports_balls))`.
 
