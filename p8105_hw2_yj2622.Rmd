@@ -107,3 +107,40 @@ This dataset provides information about each entrance and exit for each subway i
    * convert the values of `entry` to logical variables.
   
  * And these data are not tidy because how routes were displayed are not proper.
+ 
+ 
+ Then I try to answer questions in problem 2:
+ 
+ First, I calculate the number different subway stations:
+ 
+```{r}
+n_of_diff_station <- select(nyc_transit_data,station_name,line) %>% 
+  distinct %>% 
+  nrow
+```
+ 
+ 
+ There are `r n_of_diff_station` different stations in the dataset.
+ 
+ Next, I try to find the number of stations with ADA compliance:
+ 
+```{r}
+n_of_station_with_ada <- select(nyc_transit_data,station_name,line,ada) %>% distinct(station_name,line,.keep_all = TRUE) %>% 
+  filter(ada == TRUE) %>%
+  nrow
+```
+ 
+ 
+ There are `r n_of_station_with_ada` stations which are ADA compliant.
+ 
+ Last, I calculat ethe proportion of entrances/ exits without vending allow entrance:
+ 
+```{r}
+n_of_station_no_vending <- select(nyc_transit_data,station_name,line,vending) %>% distinct(station_name,line,.keep_all = TRUE) %>% filter(vending == "NO") %>% nrow
+
+p <- n_of_station_no_vending/ n_of_diff_station
+```
+ 
+ 
+ There are `r  round(p,digits = 3) * 100`% of entrances/exits without vending allow entrance.
+ 
