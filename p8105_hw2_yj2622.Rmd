@@ -83,7 +83,6 @@ Read and clean NYC transit data:
 nyc_transit_data <- read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
   janitor::clean_names() %>% 
   select(line, station_name, station_latitude, station_longitude, starts_with("route"), entry, vending, entrance_type, ada) %>% 
-  drop_na(route2:route11) %>% 
   mutate(entry = recode(entry, "YES" = TRUE,"NO" = FALSE))
 ```
 
@@ -105,8 +104,6 @@ This dataset provides information about each entrance and exit for each subway i
   
    * select columns needed;
   
-   * drop NAs in dataset;
-  
    * convert the values of `entry` to logical variables.
   
- * And these data are tidy.
+ * And these data are not tidy because how routes were displayed are not proper.
