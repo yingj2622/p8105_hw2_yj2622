@@ -7,7 +7,7 @@ output: github_document
 
 This is the solution to homework 2!
 
-```{r setup}
+```{r setup,include = FALSE}
 library(tidyverse)
 library(readxl)
 ```
@@ -16,7 +16,7 @@ library(readxl)
 
 Read and clean the Mr. Trash Wheel data:
 
-```{r read_clean_mtw}
+```{r read_clean_mtw,warning = FALSE}
 mr_trash_wheel_data <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet = "Mr. Trash Wheel",skip = 1,range = cell_cols("A:N")) %>% 
   janitor::clean_names() %>% 
   drop_na(dumpster) %>% 
@@ -24,6 +24,12 @@ mr_trash_wheel_data <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.x
     sports_balls = round(sports_balls),
     sports_balls = as.integer(sports_balls)
   )
+```
+
+The first 10 rows of cleaned Mr. Trash Wheel data:
+
+```{r show_mtw_data, echo = FALSE}
+mr_trash_wheel_data
 ```
 
 Read precipitation data:
@@ -53,6 +59,12 @@ precip_df <- bind_rows(precip_2017,precip_2018) %>%
 left_join( month_df, by = "month") %>% 
   select(-month) %>% 
   rename("month" ="month_name")
+```
+
+The first 10 rows of combined annual precipitation:
+
+```{r show_precipdata, echo = FALSE}
+precip_df
 ```
 
 This dataset contains information from the Mr. Trash Wheel trash collector in Baltimore, Maryland. The trash enters the innder harbor, the trashwheel collectes that trash, and stores it in a dumpster. 
