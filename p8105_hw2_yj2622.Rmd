@@ -73,7 +73,7 @@ This dataset contains information from the Mr. Trash Wheel trash collector in Ba
  
  * Additional data sheets include month precipitation data from 2014 to  2019. The combined precipitation dataset has `r nrow(precip_df)` rows   and key variables are year, month and precipitation amount. 
  
- * The total precipitation in 2018 was `r sum(pull(precip_df,total)[pull(precip_df,year) == 2018])`. The median    number of sports balls in 2017 was `r  median(pull(mr_trash_wheel_data,sports_balls))`.
+ * The total precipitation in 2018 was `r sum(pull(precip_df,total)[pull(precip_df,year) == 2018])`. The median    number of sports balls in 2017 was `r  median(pull(mr_trash_wheel_data,sports_balls)[pull(mr_trash_wheel_data,year) == 2017])`.
 
 ## Problem 2
 
@@ -113,7 +113,7 @@ This dataset provides information about each entrance and exit for each subway i
  
  First, I calculate the number of different subway stations:
  
-```{r}
+```{r n_diff_station}
 n_of_diff_station <- select(nyc_transit_data,station_name,line) %>% 
   distinct %>% 
   nrow
@@ -124,7 +124,7 @@ n_of_diff_station <- select(nyc_transit_data,station_name,line) %>%
  
  Next, I try to find the number of stations with ADA compliance:
  
-```{r}
+```{r n_ada_station}
 n_of_station_with_ada <- select(nyc_transit_data,station_name,line,ada) %>% distinct(station_name,line,.keep_all = TRUE) %>% 
   filter(ada == TRUE) %>%
   nrow
@@ -133,9 +133,9 @@ n_of_station_with_ada <- select(nyc_transit_data,station_name,line,ada) %>% dist
  
  There are `r n_of_station_with_ada` stations which are ADA compliant.
  
- Then, I calculat the proportion of entrances/ exits without vending allow entrance:
+ Then, I calculate the proportion of entrances/ exits without vending allow entrance:
  
-```{r}
+```{r pro_entr_no_vending}
 n_of_station_no_vending <- select(nyc_transit_data,station_name,line,vending) %>% distinct(station_name,line,.keep_all = TRUE) %>% filter(vending == "NO") %>% nrow
 
 p <- n_of_station_no_vending/ n_of_diff_station
@@ -180,4 +180,25 @@ In the end, I get the number of stations serving A train which are ADA compliant
 n_of_station_a_ada <- filter(station_serve_a_df,ada == TRUE) %>% nrow
 ```
 
-So there are `r n_of_station_a_ada` stations which both serve A train and are ADA compliant..
+So there are `r n_of_station_a_ada` stations which both serve A train and are ADA compliant.
+
+## Problem 3
+
+First, I read and clean the data in `pols-month.csv`:
+
+```{r read_clean_pols_month_data, message = FALSE}
+pols_month_data <- read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>%
+  separate(mon,c("year","month","day"),sep = "-") %>% 
+  mutate(month = month.abb[as.numeric(month)]) %>% 
+  mutate(president = ifelse(prez_gop != 0,"gop","dem")) %>% 
+  select(-prez_gop,-prez_dem) %>% 
+  select(-day)
+  
+```
+
+The cleaned dataset is as follow (10 lines):
+
+```{r}
+pols_month_data
+```
+
