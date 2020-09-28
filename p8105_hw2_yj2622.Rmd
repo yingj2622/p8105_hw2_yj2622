@@ -186,7 +186,7 @@ So there are `r n_of_station_a_ada` stations which both serve A train and are AD
 
 First, I read and clean the data in `pols-month.csv`:
 
-```{r read_clean_pols_month_data, message = FALSE}
+```{r clean_pols_month_data, message = FALSE}
 pols_month_data <- read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>%
   separate(mon,c("year","month","day"),sep = "-") %>% 
   mutate(month = month.abb[as.numeric(month)]) %>% 
@@ -200,5 +200,24 @@ The cleaned dataset is as follow (10 lines):
 
 ```{r}
 pols_month_data
+```
+
+Next, I read and clean the data in snp.csv in a similiar way :
+
+```{r clean_snp_data,message = FALSE}
+snp_data <- read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% 
+  separate(date,c("month","day","year"),sep = "/") %>% 
+  relocate(year,month) %>% 
+  mutate(month = as.numeric(month)) %>% 
+  arrange(year,month) %>% 
+  mutate(month = month.abb[month]) %>% 
+  select(-day)
+  
+```
+
+Read the first ten lines of snp_data:
+
+```{r}
+snp_data
 ```
 
