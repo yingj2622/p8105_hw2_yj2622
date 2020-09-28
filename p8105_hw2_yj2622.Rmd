@@ -254,3 +254,11 @@ The final dataset is as below:
 pol_snp_unemp_data
 ```
 
+* In the pols_month dataset, there are `r nrow(pols_month_data)` rows and
+`r ncol(pols_month_data)` columns, and the range of year is `r min(pull(pols_month_data,year))` to `r max(pull(pols_month_data,year))`. It provides information about year, month, number of governors, senators and representatives who are democratic or republican respectively, and the president's party at that time.
+
+* In the snp dataset, there are `r nrow(snp_data)` rows and `r ncol(snp_data)` columns. The year ranges from `r min(pull(snp_data,year))` to`r max(pull(snp_data,year))`. It provides information about time and the closing values of the S&P stock index.
+
+* In the unemployment dataset, there are `r nrow(unemp_data)` rows and `r ncol(unemp_data)` columns. The year ranges from `r min(pull(unemp_data,year))` to`r max(pull(unemp_data,year))`. This dataset contains information about year, month and percentage of unemployment in that time period.
+
+* Finally, the merged dataset have`r nrow(pol_snp_unemp_data)` rows and`r ncol(pol_snp_unemp_data)` columns. The year ranges from `r min(pull(pol_snp_unemp_data,year))` to`r max(pull(pol_snp_unemp_data,year))`. It includes all information in the three datasets.
