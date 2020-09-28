@@ -221,3 +221,36 @@ Read the first ten lines of snp_data:
 snp_data
 ```
 
+Then clean the unemployment dataset:
+
+```{r clean_unemp,message = FALSE}
+unemp_data <- read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>% 
+  pivot_longer(
+    Jan:Dec,
+    names_to = "month",
+    values_to = "unemployment"
+  ) %>% 
+   janitor::clean_names() %>% 
+  mutate(year = as.character(year))
+  
+```
+
+Now let's take a look at the first ten rows of cleaned dataset:
+
+```{r}
+unemp_data
+```
+
+After that, I merge these three datasets in order:
+
+```{r merge}
+pol_snp_unemp_data <- left_join(pols_month_data,snp_data, by = c("year","month")) %>% 
+  left_join(unemp_data,by = c("year","month"))
+```
+
+The final dataset is as below:
+
+```{r}
+pol_snp_unemp_data
+```
+
