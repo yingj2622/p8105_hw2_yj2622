@@ -73,7 +73,7 @@ This dataset contains information from the Mr. Trash Wheel trash collector in Ba
  
  * Additional data sheets include month precipitation data from 2014 to  2019. The combined precipitation dataset has `r nrow(precip_df)` rows   and key variables are year, month and precipitation amount. 
  
- * The total precipitation in 2018 was `r sum(pull(precip_df,total)[pull(precip_df,year) == 2018])`. The median    number of sports balls in 2017 was `r  median(pull(mr_trash_wheel_data,sports_balls)[pull(mr_trash_wheel_data,year) == 2017])`.
+ * The total precipitation in 2018 was `r sum(pull(precip_df,total)[pull(precip_df,year) == 2018])` inches. The median    number of sports balls in 2017 was `r  median(pull(mr_trash_wheel_data,sports_balls)[pull(mr_trash_wheel_data,year) == 2017])`.
 
 ## Problem 2
 
@@ -94,7 +94,7 @@ nyc_transit_data
 
 This dataset provides information about each entrance and exit for each subway in NYC.
 
- * It contains infromation on station name, location, routes and whether it's an entry.
+ * It contains information about station name, location, routes and whether it's an entry.
  
  * There are total `r nrow(nyc_transit_data)` rows and `r ncol(nyc_transit_data)` columns in this dataset.
  
@@ -106,7 +106,7 @@ This dataset provides information about each entrance and exit for each subway i
   
    * convert the values of `entry` to logical variables.
   
- * And these data are not tidy because how routes were displayed are not proper.
+ * And these data are not tidy because how routes were arranged are not proper.
  
  
  Then I try to answer questions in problem 2:
@@ -114,37 +114,40 @@ This dataset provides information about each entrance and exit for each subway i
  First, I calculate the number of different subway stations:
  
 ```{r n_diff_station}
-n_of_diff_station <- select(nyc_transit_data,station_name,line) %>% 
-  distinct %>% 
+n_diff_station <- distinct(nyc_transit_data,station_name,line) %>% 
   nrow
 ```
  
  
- There are `r n_of_diff_station` different stations in the dataset.
+ There are `r n_diff_station` different stations in the dataset.
  
  Next, I try to find the number of stations with ADA compliance:
  
 ```{r n_ada_station}
-n_of_station_with_ada <- select(nyc_transit_data,station_name,line,ada) %>% distinct(station_name,line,.keep_all = TRUE) %>% 
+n_station_with_ada <- select(nyc_transit_data,station_name,line,ada) %>% distinct(station_name,line,.keep_all = TRUE) %>% 
   filter(ada == TRUE) %>%
   nrow
 ```
  
  
- There are `r n_of_station_with_ada` stations which are ADA compliant.
+ There are `r n_station_with_ada` stations which are ADA compliant.
  
  Then, I calculate the proportion of entrances/ exits without vending allow entrance:
  
-```{r pro_entr_no_vending}
-n_of_station_no_vending <- select(nyc_transit_data,station_name,line,vending) %>% distinct(station_name,line,.keep_all = TRUE) %>% filter(vending == "NO") %>% nrow
+```{r p_no_vending_entrance}
+n_no_vending <- filter(nyc_transit_data,vending == "NO") %>% nrow
 
-p <- n_of_station_no_vending/ n_of_diff_station
+n_no_vending_entrance <- filter(nyc_transit_data,vending == "NO") %>% 
+  filter(entry == TRUE) %>% 
+  nrow
+
+p_no_vending_entrance = n_no_vending_entrance/n_no_vending
 ```
  
  
-There are `r  round(p,digits = 3) * 100`% of entrances/exits without vending allow entrance.
+There are `r  round(p_no_vending_entrance,digits = 3) * 100`% of entrances/exits without vending allow entrance.
  
-To answer the left questions, I reformat data to make route number and route name become distinct variables. Since the value typs of columns start with "route" is different, I also convert those which are double into character:
+To solve the rest of the problem, I reformat data to make route number and route name become distinct variables. Since the value types of columns start with "route" is different, I also convert those columns whose values are double into character:
 
 ```{r}
 nyc_transit_tidy_data <- mutate(
@@ -152,10 +155,11 @@ nyc_transit_tidy_data <- mutate(
  across(route8:route11,as.character)) %>% 
   pivot_longer(
   cols = starts_with("route"),
-  names_to = "route_number",
-  names_prefix = "routine",
-  values_to = "route_name"
-)
+  names_to = "route_name",
+  names_prefix = "route",
+  values_to = "route_number"
+) %>% 
+  drop_na(route_number)
 ```
 
 Here are the first 10 rows of the reformatted dataset:
@@ -167,9 +171,9 @@ nyc_transit_tidy_data
 Then get the table of distinct stations serving the A train:
 
 ```{r}
-station_serve_a_df <- select(nyc_transit_tidy_data,station_name,line,route_name,ada) %>% 
+station_serve_a_df <- select(nyc_transit_tidy_data,station_name,line,route_number,ada) %>% 
   distinct(station_name,line,.keep_all = TRUE) %>% 
-  filter(route_name == "A")
+  filter(route_number == "A")
 ```
 
 So we can get that there are `r nrow(station_serve_a_df)` stations serving A train
@@ -212,7 +216,6 @@ snp_data <- read_csv("./data/fivethirtyeight_datasets/snp.csv") %>%
   arrange(year,month) %>% 
   mutate(month = month.abb[month]) %>% 
   select(-day)
-  
 ```
 
 Read the first ten lines of snp_data:
