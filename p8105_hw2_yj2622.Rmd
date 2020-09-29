@@ -7,7 +7,7 @@ output: github_document
 
 This is the solution to homework 2!
 
-```{r setup,include = FALSE}
+```{r setup}
 library(tidyverse)
 library(readxl)
 ```
@@ -24,12 +24,6 @@ mr_trash_wheel_data <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.x
     sports_balls = round(sports_balls),
     sports_balls = as.integer(sports_balls)
   )
-```
-
-The first 10 rows of cleaned Mr. Trash Wheel data:
-
-```{r show_mtw_data, echo = FALSE}
-mr_trash_wheel_data
 ```
 
 Read precipitation data:
@@ -61,19 +55,15 @@ left_join( month_df, by = "month") %>%
   rename("month" ="month_name")
 ```
 
-The first 10 rows of combined annual precipitation:
-
-```{r show_precipdata, echo = FALSE}
-precip_df
-```
-
 This dataset contains information from the Mr. Trash Wheel trash collector in Baltimore, Maryland. The trash enters the innder harbor, the trashwheel collectes that trash, and stores it in a dumpster. 
 
  * The dataset contains information on year, month and trash collected,  including some specific kind of trash. There are a total of `r   nrow(mr_trash_wheel_data)` rows in the final dataset. 
  
  * Additional data sheets include month precipitation data from 2014 to  2019. The combined precipitation dataset has `r nrow(precip_df)` rows   and key variables are year, month and precipitation amount. 
  
- * The total precipitation in 2018 was `r sum(pull(precip_df,total)[pull(precip_df,year) == 2018])` inches. The median    number of sports balls in 2017 was `r  median(pull(mr_trash_wheel_data,sports_balls)[pull(mr_trash_wheel_data,year) == 2017])`.
+ * The total precipitation in 2018 was `r sum(pull(precip_df,total)[pull(precip_df,year) == 2018])` inches.
+ 
+ *The median    number of sports balls in 2017 was `r  median(pull(mr_trash_wheel_data,sports_balls)[pull(mr_trash_wheel_data,year) == 2017])`.
 
 ## Problem 2
 
@@ -86,27 +76,21 @@ nyc_transit_data <- read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.c
   mutate(entry = recode(entry, "YES" = TRUE,"NO" = FALSE))
 ```
 
-The first 10 lines of the cleaned NYC transit dataset :
-
-```{r}
-nyc_transit_data
-```
-
 This dataset provides information about each entrance and exit for each subway in NYC.
 
- * It contains information about station name, location, routes and whether it's an entry.
+ * It contains information about station name, location, routes,vending or not, and whether it's an entry.
  
  * There are total `r nrow(nyc_transit_data)` rows and `r ncol(nyc_transit_data)` columns in this dataset.
  
  * My cleaning steps:
  
-   * change the variable names into proper format;
+   * clean variable names;
   
    * select columns needed;
   
    * convert the values of `entry` to logical variables.
   
- * And these data are not tidy because how routes were arranged are not proper.
+ * And these data are not tidy because how routes were organized are not proper.
  
  
  Then I try to answer questions in problem 2:
@@ -124,7 +108,8 @@ n_diff_station <- distinct(nyc_transit_data,station_name,line) %>%
  Next, I try to find the number of stations with ADA compliance:
  
 ```{r n_ada_station}
-n_station_with_ada <- select(nyc_transit_data,station_name,line,ada) %>% distinct(station_name,line,.keep_all = TRUE) %>% 
+n_station_with_ada <- 
+  select(nyc_transit_data,station_name,line,ada) %>% distinct(station_name,line,.keep_all = TRUE) %>% 
   filter(ada == TRUE) %>%
   nrow
 ```
@@ -162,13 +147,7 @@ nyc_transit_tidy_data <- mutate(
   drop_na(route_number)
 ```
 
-Here are the first 10 rows of the reformatted dataset:
-
-```{r}
-nyc_transit_tidy_data
-```
-
-Then get the table of distinct stations serving the A train:
+Then get the table of distinct stations serving the A train, and ADA compliance is included in this table:
 
 ```{r}
 station_serve_a_df <- select(nyc_transit_tidy_data,station_name,line,route_number,ada) %>% 
@@ -184,7 +163,7 @@ In the end, I get the number of stations serving A train which are ADA compliant
 n_of_station_a_ada <- filter(station_serve_a_df,ada == TRUE) %>% nrow
 ```
 
-So there are `r n_of_station_a_ada` stations which both serve A train and are ADA compliant.
+So  of the stations that serve the A train, there are `r n_of_station_a_ada` stations which are ADA compliant.
 
 ## Problem 3
 
@@ -200,13 +179,7 @@ pols_month_data <- read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>
   
 ```
 
-The cleaned dataset is as follow (10 lines):
-
-```{r}
-pols_month_data
-```
-
-Next, I read and clean the data in snp.csv in a similiar way :
+Next, I read and clean the data in snp.csv in a similar way :
 
 ```{r clean_snp_data,message = FALSE}
 snp_data <- read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% 
@@ -216,12 +189,6 @@ snp_data <- read_csv("./data/fivethirtyeight_datasets/snp.csv") %>%
   arrange(year,month) %>% 
   mutate(month = month.abb[month]) %>% 
   select(-day)
-```
-
-Read the first ten lines of snp_data:
-
-```{r}
-snp_data
 ```
 
 Then clean the unemployment dataset:
@@ -238,12 +205,6 @@ unemp_data <- read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>%
   
 ```
 
-Now let's take a look at the first ten rows of cleaned dataset:
-
-```{r}
-unemp_data
-```
-
 After that, I merge these three datasets in order:
 
 ```{r merge}
@@ -251,17 +212,11 @@ pol_snp_unemp_data <- left_join(pols_month_data,snp_data, by = c("year","month")
   left_join(unemp_data,by = c("year","month"))
 ```
 
-The final dataset is as below:
-
-```{r}
-pol_snp_unemp_data
-```
-
 * In the pols_month dataset, there are `r nrow(pols_month_data)` rows and
-`r ncol(pols_month_data)` columns, and the range of year is `r min(pull(pols_month_data,year))` to `r max(pull(pols_month_data,year))`. It provides information about year, month, number of governors, senators and representatives who are democratic or republican respectively, and the president's party at that time.
+`r ncol(pols_month_data)` columns, and the range of year is from `r min(pull(pols_month_data,year))` to `r max(pull(pols_month_data,year))`. It provides information about year, month, number of governors, senators and representatives who are democratic or republican respectively, and the president's party at that time.
 
-* In the snp dataset, there are `r nrow(snp_data)` rows and `r ncol(snp_data)` columns. The year ranges from `r min(pull(snp_data,year))` to`r max(pull(snp_data,year))`. It provides information about time and the closing values of the S&P stock index.
+* In the snp dataset, there are `r nrow(snp_data)` rows and `r ncol(snp_data)` columns. The year ranges from `r min(pull(snp_data,year))` to`r max(pull(snp_data,year))`. It provides information about year, month and the closing values of the S&P stock index at that time.
 
 * In the unemployment dataset, there are `r nrow(unemp_data)` rows and `r ncol(unemp_data)` columns. The year ranges from `r min(pull(unemp_data,year))` to`r max(pull(unemp_data,year))`. This dataset contains information about year, month and percentage of unemployment in that time period.
 
-* Finally, the merged dataset have`r nrow(pol_snp_unemp_data)` rows and`r ncol(pol_snp_unemp_data)` columns. The year ranges from `r min(pull(pol_snp_unemp_data,year))` to`r max(pull(pol_snp_unemp_data,year))`. It includes all information in the three datasets.
+* Finally, the merged dataset have`r nrow(pol_snp_unemp_data)` rows and`r ncol(pol_snp_unemp_data)` columns. The year ranges from `r min(pull(pol_snp_unemp_data,year))` to`r max(pull(pol_snp_unemp_data,year))`. It includes all information in the three separate datasets.
